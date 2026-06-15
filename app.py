@@ -306,7 +306,7 @@ def calculate_probability_completion(sim_packs: np.ndarray, budget: float,
 PLOT_TEMPLATE = "plotly_white"
 COLOR_SOLO = "#ef4444"       # rojo  -> sin intercambio
 COLOR_EXCHANGE = "#22c55e"   # verde -> con intercambio
-COLOR_ACCENT = "#6366f1"     # índigo
+COLOR_ACCENT = "#0f766e"     # teal (cohesión con el tema)
 
 
 def plot_cost_curve(n_total, per_pack, price):
@@ -401,30 +401,69 @@ def plot_savings_curve(n_total, missing, duplicates, exchanged_already,
 # ===========================================================================
 CUSTOM_CSS = """
 <style>
-.block-container { padding-top: 2rem; }
-.big-title {
-    font-size: 2.5rem; font-weight: 800; line-height: 1.1;
-    background: linear-gradient(90deg,#6366f1,#22c55e);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: .2rem;
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --ink:#0a1f33; --pitch:#15803d; --grass:#22c55e; --gold:#f59e0b;
+  --paper:#f6f8f4; --line:#e3e8e0; --muted:#6b7a72;
 }
-.subtitle { color:#64748b; font-size:1.05rem; margin-bottom:1.2rem; }
-.kpi-card {
-    background:#ffffff; border:1px solid #e2e8f0; border-radius:16px;
-    padding:1rem 1.2rem; box-shadow:0 2px 8px rgba(15,23,42,.05);
-    height:100%;
+
+/* Cursor de pelota en todo el sitio (texto editable conserva el caret) */
+* { cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDM2IDM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxNiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjIiLz48cG9seWdvbiBwb2ludHM9IjE4LDkgMjUsMTQuNSAyMiwyMyAxNCwyMyAxMSwxNC41IiBmaWxsPSIjMGYxNzJhIi8+PHBhdGggZD0iTTE4LDkgTDE4LDMgTTI1LDE0LjUgTDMxLDEyIE0yMiwyMyBMMjYsMjkgTTE0LDIzIEwxMCwyOSBNMTEsMTQuNSBMNSwxMiIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIvPjwvc3ZnPgo=') 18 18, auto; }
+input, textarea, select, [contenteditable] { cursor: text !important; }
+
+html, body, [class*="css"] { font-family:'Inter',system-ui,sans-serif; }
+.block-container { padding-top:1.1rem; max-width:1200px; }
+
+/* ---- HERO ---- */
+.hero{
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 22px, rgba(255,255,255,0) 22px 44px),
+    radial-gradient(130% 170% at 0% 0%, #114063 0%, var(--ink) 62%);
+  border:1px solid rgba(255,255,255,.06); border-radius:18px;
+  padding:30px 34px; margin-bottom:20px;
+  box-shadow:0 14px 34px rgba(10,31,51,.28);
 }
-.kpi-label { color:#64748b; font-size:.82rem; font-weight:600;
-             text-transform:uppercase; letter-spacing:.04em; }
-.kpi-value { font-size:1.6rem; font-weight:800; color:#0f172a; margin-top:.2rem; }
-.kpi-sub  { color:#94a3b8; font-size:.78rem; }
-.msg-box {
-    border-radius:14px; padding:.9rem 1.1rem; margin:.4rem 0;
-    font-weight:600; border:1px solid transparent;
-}
-.msg-green { background:#ecfdf5; color:#065f46; border-color:#a7f3d0; }
-.msg-blue  { background:#eff6ff; color:#1e40af; border-color:#bfdbfe; }
-.msg-amber { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+.hero .eyebrow{ font-family:'Anton',sans-serif; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--grass); font-size:.8rem; }
+.hero h1{ font-family:'Anton',sans-serif; color:#fff; font-weight:400;
+  font-size:3rem; line-height:.96; margin:.2rem 0 .4rem; text-transform:uppercase; }
+.hero h1 .ball{ color:var(--grass); }
+.hero p{ color:#aebfc9; font-size:1rem; margin:0; max-width:64ch; }
+
+/* ---- Encabezados de sección ---- */
+h2,h3{ font-family:'Inter',sans-serif !important; color:var(--ink) !important;
+  font-weight:700 !important; }
+.block-container h3{ border-top:1px solid var(--line);
+  padding-top:.9rem; margin-top:1.4rem !important; }
+
+/* ---- Tarjetas KPI estilo casilla de álbum ---- */
+.kpi-card{ background:#fff; border:1px solid var(--line);
+  border-left:5px solid var(--grass); border-radius:12px;
+  padding:.95rem 1.1rem; height:100%;
+  box-shadow:0 1px 2px rgba(10,31,51,.05);
+  transition:transform .12s ease, box-shadow .12s ease; }
+.kpi-card:hover{ transform:translateY(-2px);
+  box-shadow:0 10px 24px rgba(10,31,51,.12); }
+.kpi-label{ color:var(--muted); font-size:.72rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.07em; }
+.kpi-value{ font-family:'Anton',sans-serif; font-weight:400;
+  font-size:1.9rem; color:var(--ink); line-height:1.05; margin-top:.25rem; }
+.kpi-sub{ color:#9aa8a0; font-size:.76rem; margin-top:.15rem; }
+
+/* ---- Mensajes ---- */
+.msg-box{ border-radius:12px; padding:.85rem 1.05rem; margin:.45rem 0;
+  font-weight:600; border:1px solid transparent; }
+.msg-green{ background:#eaf7ef; color:#14532d; border-color:#bbe7cb; }
+.msg-blue { background:#eef4fb; color:#15406b; border-color:#c3d8ef; }
+.msg-amber{ background:#fdf4e3; color:#7c4a08; border-color:#f3d79a; }
+
+/* ---- Botón Ejecutar ---- */
+.stButton > button{ background:var(--pitch) !important; color:#fff !important;
+  border:0 !important; border-radius:11px !important; font-weight:700 !important;
+  padding:.6rem 1rem !important;
+  box-shadow:0 6px 16px rgba(21,128,61,.28) !important; }
+.stButton > button:hover{ background:#126b34 !important; }
 </style>
 """
 
@@ -456,11 +495,15 @@ def main():
     st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
     # ---------------------- Encabezado ----------------------
-    st.markdown('<div class="big-title">⚽ Panini Smart Collector</div>',
-                unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">Simulador de gasto, probabilidad e '
-                'intercambio · basado en el <i>Panini Collector Problem</i>'
-                '</div>', unsafe_allow_html=True)
+    st.markdown(
+        '''<div class="hero">
+              <div class="eyebrow">Coupon Collector · Monte Carlo · Intercambio</div>
+              <h1>Panini <span class="ball">Smart</span> Collector</h1>
+              <p>Calcula cuánto cuesta, con qué probabilidad y por qué camino
+                 conviene completar tu álbum: comprar sobres, canjear repetidas
+                 o ir directo a las que faltan.</p>
+           </div>''',
+        unsafe_allow_html=True)
 
     # ---------------------- Sidebar (inputs) ----------------------
     with st.sidebar:

@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vista previa · Panini Smart Collector</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap');
+:root{--ink:#0a1f33;--pitch:#15803d;--grass:#22c55e;--gold:#f59e0b;--paper:#f6f8f4;--line:#e3e8e0;--muted:#6b7a72}
+*{cursor:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDM2IDM2Ij48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxNiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjIiLz48cG9seWdvbiBwb2ludHM9IjE4LDkgMjUsMTQuNSAyMiwyMyAxNCwyMyAxMSwxNC41IiBmaWxsPSIjMGYxNzJhIi8+PHBhdGggZD0iTTE4LDkgTDE4LDMgTTI1LDE0LjUgTDMxLDEyIE0yMiwyMyBMMjYsMjkgTTE0LDIzIEwxMCwyOSBNMTEsMTQuNSBMNSwxMiIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIvPjwvc3ZnPgo=') 18 18, auto;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);margin:0;padding:28px;color:#1f2d27}
+.wrap{max-width:1100px;margin:0 auto}
+.hero{background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 22px,rgba(255,255,255,0) 22px 44px),radial-gradient(130% 170% at 0% 0%,#114063 0%,var(--ink) 62%);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:30px 34px;margin-bottom:20px;box-shadow:0 14px 34px rgba(10,31,51,.28)}
+.eyebrow{font-family:'Anton',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--grass);font-size:.8rem}
+.hero h1{font-family:'Anton',sans-serif;color:#fff;font-weight:400;font-size:3rem;line-height:.96;margin:.2rem 0 .4rem;text-transform:uppercase}
+.hero h1 .ball{color:var(--grass)}
+.hero p{color:#aebfc9;margin:0;max-width:64ch}
+h3{font-weight:700;color:var(--ink);border-top:1px solid var(--line);padding-top:.9rem;margin-top:1.6rem}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi-card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--grass);border-radius:12px;padding:.95rem 1.1rem;box-shadow:0 1px 2px rgba(10,31,51,.05);transition:transform .12s,box-shadow .12s}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(10,31,51,.12)}
+.kpi-card.gold{border-left-color:var(--gold)}
+.kpi-label{color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.kpi-value{font-family:'Anton',sans-serif;font-size:1.9rem;color:var(--ink);line-height:1.05;margin-top:.25rem}
+.kpi-sub{color:#9aa8a0;font-size:.76rem;margin-top:.15rem}
+.msg{border-radius:12px;padding:.85rem 1.05rem;margin:.5rem 0;font-weight:600;background:#eaf7ef;color:#14532d;border:1px solid #bbe7cb}
+.msg.amber{background:#fdf4e3;color:#7c4a08;border-color:#f3d79a}
+.btn{margin-top:14px;background:var(--pitch);color:#fff;border:0;border-radius:11px;font-weight:700;padding:.7rem 1.2rem;box-shadow:0 6px 16px rgba(21,128,61,.28)}
+</style></head><body><div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Coupon Collector · Monte Carlo · Intercambio</div>
+    <h1>Panini <span class="ball">Smart</span> Collector</h1>
+    <p>Calcula cuánto cuesta, con qué probabilidad y por qué camino conviene
+       completar tu álbum: comprar sobres, canjear repetidas o ir directo a las que faltan.</p>
+    <button class="btn">🚀 Ejecutar simulación</button>
+  </div>
+  <h3>📊 Indicadores principales</h3>
+  <div class="grid">
+    <div class="kpi-card"><div class="kpi-label">Álbum completado</div><div class="kpi-value">0.0%</div><div class="kpi-sub">0 de 980 figuritas</div></div>
+    <div class="kpi-card"><div class="kpi-label">Sobres sin intercambio</div><div class="kpi-value">1,028</div><div class="kpi-sub">Coupon Collector</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Ahorro por intercambio</div><div class="kpi-value">S/ 2,882</div><div class="kpi-sub">67% de ahorro</div></div>
+    <div class="kpi-card"><div class="kpi-label">Costo total proyecto</div><div class="kpi-value">S/ 1,829</div><div class="kpi-sub">con intercambio</div></div>
+  </div>
+  <h3>🥤 Canal Coca-Cola</h3>
+  <div class="grid">
+    <div class="kpi-card"><div class="kpi-label">Coca-Cola faltantes</div><div class="kpi-value">14</div><div class="kpi-sub">de 14 exclusivas</div></div>
+    <div class="kpi-card"><div class="kpi-label">Botellas (al azar)</div><div class="kpi-value">46</div><div class="kpi-sub">1.5 L a S/ 7.50</div></div>
+    <div class="kpi-card"><div class="kpi-label">Gasto Coca-Cola</div><div class="kpi-value">S/ 341</div><div class="kpi-sub">canal de botellas</div></div>
+    <div class="kpi-card"><div class="kpi-label">Álbum vacío</div><div class="kpi-value">S/ 49.9</div><div class="kpi-sub">costo base</div></div>
+  </div>
+  <div class="msg amber" style="margin-top:18px">🥤 Las 14 Coca-Cola salen al azar: ~46 botellas (≈ S/ 341). Conviene canjearlas.</div>
+  <p style="color:#9aa8a0;font-size:.8rem;margin-top:18px">Mueve el mouse: el cursor es una pelota ⚽ — vista previa estática del diseño real de la app.</p>
+</div></body></html>
