@@ -233,6 +233,55 @@ def estimate_exchange_savings(n_total: int, missing: int, duplicates: int,
 
 
 # ===========================================================================
+# 3b) FIGURITAS EXCLUSIVAS COCA-COLA  (canal de botellas, no de sobres)
+# ===========================================================================
+def estimate_cocacola_cost(cc_total: int, cc_have: int,
+                           stickers_per_bottle: float, bottle_price: float,
+                           random_draw: bool = True):
+    """
+    Estima cuántas botellas y cuánto dinero cuesta conseguir las figuritas
+    EXCLUSIVAS de Coca-Cola, que no salen en sobres sino dentro de botellas
+    (ej. 1.5 L). Es un sub-problema de colección aparte del álbum principal.
+
+    Dos escenarios:
+      - random_draw=True  : cada botella trae una figurita Coca-Cola AL AZAR
+        del conjunto de `cc_total`. Conseguir las que faltan es un nuevo
+        Coupon Collector:  E[figuritas] = cc_total * H_(cc_faltan).
+        Es el caso realista y más caro (caen repetidas).
+      - random_draw=False : puedes elegir/canjear exactamente las que faltan,
+        así que solo necesitas `cc_faltan / figuritas_por_botella` botellas.
+        Es el escenario MÍNIMO (mejor caso).
+
+    Parameters
+    ----------
+    cc_total            : int    Total de figuritas Coca-Cola (ej. 14).
+    cc_have             : int    Cuántas Coca-Cola ya tengo.
+    stickers_per_bottle : float  Figuritas Coca-Cola por botella (ej. 1).
+    bottle_price        : float  Precio de la botella 1.5 L (ej. 7.5).
+    random_draw         : bool   Si las figuritas Coca-Cola salen al azar.
+
+    Returns
+    -------
+    dict con: cc_missing, bottles, cost
+    """
+    cc_missing = max(cc_total - cc_have, 0)
+    if cc_missing <= 0 or cc_total <= 0:
+        return {"cc_missing": 0, "bottles": 0.0, "cost": 0.0}
+
+    spb = max(stickers_per_bottle, 0.0001)
+    if random_draw:
+        # Coupon Collector sobre el conjunto pequeño de figuritas Coca-Cola.
+        expected_stickers = cc_total * harmonic_number(cc_missing)
+        bottles = expected_stickers / spb
+    else:
+        # Caso ideal: consigo exactamente las que me faltan.
+        bottles = cc_missing / spb
+
+    return {"cc_missing": cc_missing, "bottles": bottles,
+            "cost": bottles * bottle_price}
+
+
+# ===========================================================================
 # 4) PROBABILIDAD DE COMPLETAR SEGÚN PRESUPUESTO
 # ===========================================================================
 def calculate_probability_completion(sim_packs: np.ndarray, budget: float,
@@ -419,21 +468,39 @@ def main():
 
         st.subheader("📒 Álbum")
         n_total = st.number_input("1. Total de figuritas del álbum",
-                                  min_value=1, value=638, step=1)
+                                  min_value=1, value=980, step=1)
         have = st.number_input("2. Figuritas que ya tengo",
-                               min_value=0, value=458, step=1)
+                               min_value=0, value=0, step=1)
         missing = st.number_input("3. Figuritas que me faltan",
-                                  min_value=0, value=int(n_total - 458),
+                                  min_value=0, value=int(n_total - 0),
                                   step=1)
         duplicates = st.number_input("4. Figuritas repetidas",
-                                     min_value=0, value=320, step=1)
+                                     min_value=0, value=0, step=1)
+        album_price = st.number_input("Precio del álbum vacío (S/)",
+                                      min_value=0.0, value=49.90, step=1.0,
+                                      format="%.2f")
 
-        st.subheader("💸 Compra")
+        st.subheader("💸 Compra (sobres)")
         price = st.number_input("5. Precio por sobre (S/)",
-                                min_value=0.1, value=1.50, step=0.10,
+                                min_value=0.1, value=4.20, step=0.10,
                                 format="%.2f")
         per_pack = st.number_input("6. Figuritas por sobre",
-                                   min_value=1, value=5, step=1)
+                                   min_value=1, value=7, step=1)
+
+        st.subheader("🥤 Figuritas Coca-Cola")
+        st.caption("Figuritas exclusivas que salen en botellas, no en sobres.")
+        cc_total = st.number_input("Figuritas exclusivas Coca-Cola",
+                                   min_value=0, value=14, step=1)
+        cc_have = st.number_input("Coca-Cola que ya tengo",
+                                  min_value=0, value=0, step=1)
+        cc_per_bottle = st.number_input("Figuritas Coca-Cola por botella",
+                                        min_value=0.0, value=1.0, step=1.0,
+                                        format="%.1f")
+        bottle_price = st.number_input("Precio botella 1.5 L (S/)",
+                                       min_value=0.0, value=7.50, step=0.50,
+                                       format="%.2f")
+        cc_random = st.checkbox("Las Coca-Cola salen al azar (repiten)",
+                                value=True)
 
         st.subheader("🤝 Intercambio")
         n_people = st.number_input("7. Personas con las que intercambio",
@@ -448,7 +515,7 @@ def main():
         budget = st.number_input("Presupuesto disponible (S/)",
                                  min_value=0.0, value=500.0, step=10.0)
 
-        run = st.button("🚀 Ejecutar simulación", use_container_width=True,
+        run = st.button("🚀 Ejecutar simulación", width='stretch',
                         type="primary")
 
     # Validación suave de consistencia entre 'tengo' y 'faltan'.
@@ -460,22 +527,34 @@ def main():
     missing = int(min(missing, n_total))
 
     # ---------------------- Métricas inmediatas ----------------------
+    # Las figuritas Coca-Cola son exclusivas de botellas: se separan del
+    # "pool de sobres" para no contar su costo dos veces.
+    cc_missing_now = max(int(cc_total) - int(cc_have), 0)
+    pack_pool = max(int(n_total) - int(cc_total), 1)        # salen en sobres
+    pack_missing = int(min(max(missing - cc_missing_now, 0), pack_pool))
+
     pct_complete = (n_total - missing) / n_total * 100 if n_total else 0
-    # P(nueva en el siguiente sobre) = 1 - (poseídas/total)^per_pack
-    owned_frac = (n_total - missing) / n_total if n_total else 1.0
+    # P(nueva en el siguiente sobre): sobre el pool de figuritas de sobre.
+    owned_frac = (pack_pool - pack_missing) / pack_pool if pack_pool else 1.0
     p_new_pack = 1 - owned_frac ** per_pack
 
     # ---------------------- Ejecución ----------------------
     if run:
         with st.spinner("Simulando escenarios (Monte Carlo)…"):
             sim_packs = simulate_panini_completion(
-                int(n_total), int(missing), int(per_pack), int(n_sims))
+                int(pack_pool), int(pack_missing), int(per_pack), int(n_sims))
             exch = estimate_exchange_savings(
-                int(n_total), int(missing), int(duplicates),
+                int(pack_pool), int(pack_missing), int(duplicates),
                 int(n_people), int(exchanged_already),
                 int(per_pack), float(price))
             prob_budget = calculate_probability_completion(
                 sim_packs, float(budget), float(price))
+            # Costo del canal Coca-Cola (botellas) y costo total del proyecto.
+            cc = estimate_cocacola_cost(
+                int(cc_total), int(cc_have), float(cc_per_bottle),
+                float(bottle_price), bool(cc_random))
+            total_solo = exch["cost_solo"] + cc["cost"] + album_price
+            total_exchange = exch["cost_exchange"] + cc["cost"] + album_price
 
         # ------------------ Tarjetas KPI (fila 1) ------------------
         st.markdown("### 📊 Indicadores principales")
@@ -512,18 +591,49 @@ def main():
                      f"{prob_budget*100:.1f}%",
                      f"con S/ {budget:,.0f}")
 
+        # ------------------ Tarjetas KPI (fila 3: Coca-Cola + total) ------------------
+        c9, c10, c11, c12 = st.columns(4)
+        with c9:
+            kpi_card("Coca-Cola faltantes", f"{cc['cc_missing']:,}",
+                     f"de {cc_total} exclusivas")
+        with c10:
+            kpi_card("Botellas Coca-Cola", f"{cc['bottles']:,.0f}",
+                     "al azar" if cc_random else "eligiendo")
+        with c11:
+            kpi_card("Gasto Coca-Cola", f"S/ {cc['cost']:,.0f}",
+                     f"botella 1.5 L a S/ {bottle_price:.2f}")
+        with c12:
+            kpi_card("Costo TOTAL del proyecto",
+                     f"S/ {total_exchange:,.0f}",
+                     f"con intercambio (sin: S/ {total_solo:,.0f})")
+
         # ------------------ Mensajes interpretativos ------------------
         st.markdown("### 🧭 Recomendaciones")
         message_box(f"💰 Tu ahorro estimado por intercambio es de "
                     f"<b>S/ {exch['savings']:,.0f}</b> "
                     f"({exch['savings_pct']:.0f}%).", "green")
 
+        # Mensaje específico del canal Coca-Cola.
+        if cc["cc_missing"] > 0:
+            if cc_random:
+                message_box(
+                    f"🥤 Para las {cc['cc_missing']} figuritas Coca-Cola que te "
+                    f"faltan necesitarías ~{cc['bottles']:,.0f} botellas "
+                    f"(≈ S/ {cc['cost']:,.0f}), porque salen al azar y se "
+                    f"repiten. ¡Aquí intercambiar o comprar las puntuales "
+                    f"ahorra muchísimo!", "amber")
+            else:
+                message_box(
+                    f"🥤 Para completar las Coca-Cola necesitas ~"
+                    f"{cc['bottles']:,.0f} botellas (≈ S/ {cc['cost']:,.0f}).",
+                    "blue")
+
         # Lógica de recomendación basada en el progreso y el ahorro.
         if pct_complete < 80:
             message_box("🛒 Comprar sobres todavía es conveniente: te faltan "
                         "muchas figuritas y la probabilidad de obtener nuevas "
                         "sigue siendo alta.", "blue")
-        elif missing <= max(per_pack * 4, 20):
+        elif pack_missing <= max(per_pack * 4, 20):
             message_box("🎯 Conviene comprar las figuritas faltantes "
                         "directamente: te quedan muy pocas y comprar sobres "
                         "al azar se vuelve caro (efecto cola del Coupon "
@@ -542,25 +652,26 @@ def main():
         st.markdown("### 📈 Visualizaciones")
         g1, g2 = st.columns(2)
         with g1:
-            st.plotly_chart(plot_cost_curve(int(n_total), int(per_pack),
+            st.plotly_chart(plot_cost_curve(int(pack_pool), int(per_pack),
                                             float(price)),
-                            use_container_width=True)
+                            width='stretch')
         with g2:
             st.plotly_chart(plot_cost_comparison(exch["cost_solo"],
                                                  exch["cost_exchange"]),
-                            use_container_width=True)
+                            width='stretch')
 
         g3, g4 = st.columns(2)
         with g3:
             affordable = budget / price if price > 0 else None
             st.plotly_chart(plot_monte_carlo(sim_packs, affordable),
-                            use_container_width=True)
+                            width='stretch')
         with g4:
             st.plotly_chart(
-                plot_savings_curve(int(n_total), int(missing), int(duplicates),
+                plot_savings_curve(int(pack_pool), int(pack_missing),
+                                   int(duplicates),
                                    int(exchanged_already), int(per_pack),
                                    float(price)),
-                use_container_width=True)
+                width='stretch')
 
     else:
         # ------------------ Vista previa (antes de simular) ------------------

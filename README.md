@@ -60,6 +60,10 @@ La app se abre en el navegador (por defecto `http://localhost:8501`).
 - Sobres y gasto estimados **con** intercambio.
 - Ahorro estimado y porcentaje de ahorro.
 - Probabilidad de completar el álbum según el presupuesto ingresado.
+- **Canal Coca-Cola:** costo aparte de las figuritas exclusivas que salen en
+  botellas (ej. 14 figuritas en botellas 1.5 L), modeladas como un Coupon
+  Collector pequeño e independiente, más el **costo total del proyecto**
+  (álbum + sobres + botellas).
 
 Y muestra 4 gráficos interactivos (Plotly): curva de gasto, comparación
 con/sin intercambio, distribución Monte Carlo y curva de ahorro.
@@ -102,6 +106,7 @@ por faltantes. Para `g = 10` el gasto cae a ≈ 1/3, en línea con el estudio.
 | `coupon_collector_estimate()` | Estimación analítica base |
 | `simulate_panini_completion()` | Simulación Monte Carlo (vectorizada) |
 | `estimate_exchange_savings()` | Modelo de intercambio y ahorro |
+| `estimate_cocacola_cost()` | Costo de las figuritas exclusivas de botellas |
 | `calculate_probability_completion()` | Probabilidad según presupuesto |
 | `main()` | Interfaz Streamlit (sidebar, KPIs, gráficos) |
 
